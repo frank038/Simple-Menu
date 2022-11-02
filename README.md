@@ -12,8 +12,13 @@ Requirements:
 - pyqt5
 - python3 xdg
 
+Just launch this program with the command:
+./simplemenu.sh
+or
+python3 simplemenu.py
+
 Without compositing option enabled
 ![This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot1.png)
 
-With compositing option enabled - the optional button for launching a menu editor is shown
+With compositing option enabled - the optional button for launching a menu editor (not included) is shown
 ![This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot2.png)
