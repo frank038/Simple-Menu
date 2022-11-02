@@ -17,6 +17,8 @@ Just launch this program with the command:
 or
 python3 simplemenu.py
 
+Can be executed under Xorg and under Wayland.
+
 Without compositing option enabled
 ![This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot1.png)
 
