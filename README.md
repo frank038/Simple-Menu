@@ -4,7 +4,7 @@ A menu application.
 V. 0.5 - Free to use and modify
 
 This application lists all the applications installed in your system, also those added locally.
-Many options can be changed in its config file: theme, icon theme, position (if supported by the window manager, icon size, roundness, etc.
+Many options can be changed in its config file: theme, icon theme, position (if supported by the window manager), icon size, roundness, etc.
 This program follows the freedesktop guidelines about the desktop files. Can launch terminal programs, e.g. Htop, if a terminal is found or setted in the config file. Local desktop file are used over system desktop files. And many other things...
 
 Requirements:
