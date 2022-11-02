@@ -11,6 +11,7 @@ Requirements:
 - python3
 - pyqt5
 - python3 xdg
+- optional, for rounded corners and shadow: compositor
 
 Just launch this program with the command:
 ./simplemenu.sh
