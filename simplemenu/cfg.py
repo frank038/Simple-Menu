@@ -2,6 +2,8 @@
 win_position="center"
 # with or without window decoration: 0 with; 1 without
 win_no_deco=1
+# this program always on top: 0 no; 1 yes
+win_on_top=0
 # menu category icon size
 menu_icon_size=36
 # app icon size
@@ -10,8 +12,10 @@ menu_app_icon_size=36
 service_icon_size=20
 # service menu border colour
 service_border_color="gray"
-# program used to add applications OR ""
-app_prog=""
+# program used to add applications OR "" - full path
+app_prog="./appmenu.py"
+# program used to modify a desktop file OR ""
+app_mod_prog=app_prog
 # search field background colour: colour (in the form "#xxxxxx") OR ""
 search_field_bg="#D6D3D3"
 # this program width
@@ -34,5 +38,5 @@ scroll_handle_col="#B5B5B5"
 item_highlight_color=""
 # dialog width
 DIALOGWIDTH=300
-# terminal to use: "" for the default one
+# terminal to use: "" for the default one if any
 USER_TERMINAL=""

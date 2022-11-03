@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#### v 0.5 w
+#### v 0.6
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, os, time
 from shutil import which as sh_which
@@ -68,30 +68,31 @@ def on_pop_menu(app_dirs_user, app_dirs_system):
     #
     menu = getMenu(app_dirs_user, app_dirs_system).retList()
     for el in menu:
+        # category
         cat = el[1]
         if cat == "Multimedia":
-            # label - executable - icon - comment - path
-            Multimedia.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            # label - executable - icon - comment - path - terminal - file full path
+            Multimedia.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Development":
-            Development.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Development.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Education":
-            Education.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Education.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Game":
-            Game.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Game.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Graphics":
-            Graphics.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Graphics.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Network":
-            Network.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Network.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Office":
-            Office.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Office.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Settings":
-            Settings.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Settings.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "System":
-            System.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            System.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         elif cat == "Utility":
-            Utility.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Utility.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
         else:
-            Other.append([el[0],el[2],el[3],el[4],el[5],el[6]])
+            Other.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
     #
     # global menu_is_changed
     # if menu_is_changed == 1:
@@ -117,7 +118,7 @@ class MyDialog(QtWidgets.QMessageBox):
         elif args[0] == "Question":
             self.setIcon(QtWidgets.QMessageBox.Question)
             self.setStandardButtons(QtWidgets.QMessageBox.Ok|QtWidgets.QMessageBox.Cancel)
-        # self.setWindowIcon(QtGui.QIcon("icons/file-manager-red.svg"))
+        self.setWindowIcon(QtGui.QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle(args[0])
         self.resize(DIALOGWIDTH,300)
         self.setText(args[1])
@@ -139,8 +140,14 @@ class MyDialog(QtWidgets.QMessageBox):
 class menuWin(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(menuWin, self).__init__(parent)
+        #
+        self.setWindowIcon(QtGui.QIcon("icons/menu.png"))
+        self.setWindowTitle("Simplemenu")
+        #
         if win_no_deco:
             self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
+        if win_on_top:
+            self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
         ####### 
         self.mainBox = QtWidgets.QHBoxLayout()
         self.setLayout(self.mainBox)
@@ -337,6 +344,7 @@ class menuWin(QtWidgets.QWidget):
     #
     def f_appWin(self):
         os.system("{} &".format(app_prog))
+        self.close()
     
     # button category clicked
     def itemClicked(self, QPos):
@@ -530,6 +538,7 @@ class menuWin(QtWidgets.QWidget):
                 litem.ppath = el[4]
                 litem.setToolTip(el[3])
                 litem.tterm = el[5]
+                litem.fpath = el[6]
                 self.listWidget.addItem(litem)
                 #
         self.listWidget.scrollToTop()
@@ -546,7 +555,10 @@ class menuWin(QtWidgets.QWidget):
         self.listMenu= QtWidgets.QMenu()
         if pret == 1:
             item_b = self.listMenu.addAction("Add to bookmark")
-        #
+        if app_mod_prog:
+            item_d = self.listMenu.addAction("Modify")
+        else:
+            item_d = "None"
         action = self.listMenu.exec_(self.listWidget.mapToGlobal(QPos))
         if pret == 1 and action == item_b:
             item_idx = self.listWidget.indexAt(QPos)
@@ -565,10 +577,32 @@ class menuWin(QtWidgets.QWidget):
 {5}""".format(icon_name, _item.text(), _item.exec_n, _item.toolTip() or _item.text(), _item.ppath, str(_item.tterm))
             with open(os.path.join("bookmarks", new_book), "w") as fbook:
                 fbook.write(new_book_content)
+        # modify action
+        elif action == item_d:
+            item_idx = self.listWidget.indexAt(QPos)
+            _item = self.listWidget.itemFromIndex(item_idx)
+            # item desktop file full path
+            item_fpath = _item.fpath
+            os.system("{} {} &".format(app_prog, item_fpath))
+            #
+            # item_icon = _item.picon
+            # item_exec = _item.exec_n
+            # item_term = _item.tterm
+            # # create a desktop file
+            # dest_file = os.path.join(os.path.expanduser("~"), DESKTOP_NAME, item_name)
+            # with open(dest_file+".desktop", "w") as ff:
+                # ff.write("[Desktop Entry]\n")
+                # ff.write("Type=Application\n")
+                # ff.write("Name={}\n".format(item_name))
+                # ff.write("Exec={}\n".format(item_exec))
+                # ff.write("Icon={}\n".format(item_icon))
+                # ff.write("Terminal={}\n".format(item_term))
         #
         self.listWidget.clearSelection()
         self.listWidget.clearFocus()
         self.listWidget.setFocus(True)
+        #
+        self.close()
     
     # check whether the bookmark already exists
     def check_bookmarks(self, _item):
