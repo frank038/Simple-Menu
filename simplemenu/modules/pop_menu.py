@@ -2,7 +2,7 @@
 
 import os
 from xdg import DesktopEntry
-from xdg import IconTheme
+# from xdg import IconTheme
 # to get the language
 import locale
 
@@ -106,9 +106,9 @@ class getMenu():
                         if ffile in self.desktops_user:
                             continue
                     #
-                    fpath = os.path.join(ddir, ffile)
+                    file_path = os.path.join(ddir, ffile)
                     try:
-                        entry = DesktopEntry.DesktopEntry(fpath)
+                        entry = DesktopEntry.DesktopEntry(file_path)
                         ftype = entry.getType()
                         if ftype != "Application":
                             continue
@@ -146,12 +146,12 @@ class getMenu():
                         ficon = entry.getIcon()
                         # comment
                         fcomment = entry.getComment()
-                        # tryexec
+                        # working path
                         fpath = entry.getPath()
                         # terminal
                         fterminal = entry.getTerminal()
                         ###
-                        self.lists.append([fname, fcategory or "Missed", fexec, ficon, fcomment, fpath, fterminal])
+                        self.lists.append([fname, fcategory or "Missed", fexec, ficon, fcomment, fpath, fterminal, file_path])
                     except:
                         pass
 
