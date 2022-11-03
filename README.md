@@ -9,7 +9,7 @@ This application lists all the applications installed in your system, also those
 Many options can be changed in its config file: theme, icon theme, position (if supported by the window manager), icon size, roundness, etc.
 This program follows (most of) the freedesktop guidelines about the desktop files. Can launch terminal programs, e.g. Htop, if a terminal is found or setted in the config file. Local desktop file are used over system desktop files. Integrated a basic program for adding or modifying menu entries (optional). Searching, and many other things...
 
-To bookmark or modify an entry, just right click on that item.
+To bookmark or modify an entry, just right click on it.
 
 Requirements:
 - python3
