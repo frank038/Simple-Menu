@@ -27,3 +27,6 @@ Without compositing option enabled
 
 With compositing option enabled - the optional button for launching a menu editor is shown
 ![This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot2.png)
+
+The included program that adds or modifies menu entries.
+[This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot3.png)
