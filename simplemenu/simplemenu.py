@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#### v 0.6
+#### v 0.7
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, os, time
 from shutil import which as sh_which
@@ -120,7 +120,7 @@ class MyDialog(QtWidgets.QMessageBox):
             self.setStandardButtons(QtWidgets.QMessageBox.Ok|QtWidgets.QMessageBox.Cancel)
         self.setWindowIcon(QtGui.QIcon("icons/file-manager-red.svg"))
         self.setWindowTitle(args[0])
-        self.resize(DIALOGWIDTH,300)
+        self.resize(DIALOGWIDTH,100)
         self.setText(args[1])
         retval = self.exec_()
     
@@ -426,6 +426,7 @@ class menuWin(QtWidgets.QWidget):
                             litem.ppath = el[4]
                             litem.setToolTip(el[3])
                             litem.tterm = el[5]
+                            litem.fpath = el[6]
                             self.listWidget.addItem(litem)
                             #
                     self.listWidget.scrollToTop()

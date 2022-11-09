@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-#### v 0.6
+#### v 0.7
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, os
 from cfg import DIALOGWIDTH
-# DIALOGWIDTH = 300
+
 
 freedesktop_main_categories = ["AudioVideo","Development",
                               "Education","Game","Graphics","Network",
@@ -96,6 +96,10 @@ class appWin(QtWidgets.QWidget):
         #### buttons
         self.hbox_btn = QtWidgets.QHBoxLayout()
         self.mainBox.addLayout(self.hbox_btn, 13, 0, 1, 6)
+        ## delete button
+        self.del_btn = QtWidgets.QPushButton("Delete")
+        self.del_btn.clicked.connect(self.f_delete)
+        self.hbox_btn.addWidget(self.del_btn)
         ## accept button
         self.acpt_btn = QtWidgets.QPushButton("Accept")
         self.acpt_btn.clicked.connect(self.f_accept)
@@ -110,13 +114,33 @@ class appWin(QtWidgets.QWidget):
         #
         self.show()
         
+    def f_delete(self):
+        if not self.le_file_name.text() or not self.le_name.text() or not self.le_exec.text():
+            MyDialog("Info", "Nothing to do.", self)
+            return
+        #
+        if os.path.dirname(self.file_name) == app_dir_user:
+            #
+            ret = MyDialog("Question", "Delete?", self)
+            if ret.getValue() == 1:
+                try:
+                    os.remove(self.file_name)
+                    self.close()
+                except Exception as E:
+                    MyDialog("Error", str(E), self)
+                    return
+        else:
+            MyDialog("Info", "Cannot remove a system file.", self)
+            return
     
     def f_accept(self):
         if not self.le_file_name.text() or not self.le_name.text() or not self.le_exec.text():
             MyDialog("Info", "Mandatory field(s) empty.", self)
             return
         #
-        file_name = self.le_file_name.text().rstrip(".desktop")+".desktop"
+        file_name = self.le_file_name.text()
+        if not file_name.endswith(".desktop"):
+            file_name += ".desktop"
         file_name_path = os.path.join(app_dir_user, file_name)
         if os.path.exists(file_name_path):
             ret = MyDialog("Question", "The desktop file already exists.\nDo you want to overwrite it?", self)
@@ -148,6 +172,11 @@ Hidden={}
             MyDialog("Info", "Done.", self)
         except Exception as E:
             MyDialog("Error", str(E), self)
+        #
+        self.file_name = file_name_path
+        #
+        self.le_file_name.setText(file_name)
+        self.le_file_name.setEnabled(False)
     
     def f_modify(self):
         file_content = None
@@ -155,6 +184,7 @@ Hidden={}
             file_content = ffile.readlines()
         #
         self.le_file_name.setText(os.path.basename(self.file_name))
+        self.le_file_name.setEnabled(False)
         #
         for el in file_content:
             if el[0:5] == "Name=":
@@ -170,7 +200,9 @@ Hidden={}
             elif el[0:11] == "Categories=":
                 cat_name = el[11:].strip("\n").split(";")[0]
                 if cat_name in freedesktop_main_categories:
-                    self.combo_categ.setCurrentText(cat_name)
+                    cb_idx = self.combo_categ.findText(cat_name)
+                    if cb_idx != -1:
+                        self.combo_categ.setCurrentIndex(cb_idx)
             elif el[0:9] == "MimeType=":
                 self.le_mime.setText(el[9:].strip("\n"))
             elif el[0:9] == "Keywords=":
@@ -188,7 +220,6 @@ Hidden={}
             elif el[0:7] == "Hidden=":
                 hidd_chk = el[7:].strip("\n")
                 self.chk_hidd.setChecked(False if hidd_chk=="false" else True)
-            
     
     def f_close(self):
         ret = MyDialog("Question", "Close this program?", self)
@@ -217,9 +248,9 @@ class MyDialog(QtWidgets.QMessageBox):
         elif args[0] == "Question":
             self.setIcon(QtWidgets.QMessageBox.Question)
             self.setStandardButtons(QtWidgets.QMessageBox.Ok|QtWidgets.QMessageBox.Cancel)
-        self.setWindowIcon(QtGui.QIcon("icons/file-manager-red.svg"))
+        self.setWindowIcon(QtGui.QIcon("icons/dialog-red.svg"))
         self.setWindowTitle(args[0])
-        self.resize(DIALOGWIDTH,300)
+        self.resize(DIALOGWIDTH,50)
         self.setText(args[1])
         self.Value = None
         retval = self.exec_()
