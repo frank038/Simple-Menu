@@ -24,6 +24,10 @@ python3 simplemenu.py
 
 Can be executed under Xorg and under Wayland (no xwayland required).
 
+This program can load the applications in two ways:
+1) by parsing the desktop files at every launch
+2) by creating a list (done automatically the first time, or manually); in this case the file must be recreated at every change in the menu: just execute createmenu.sh from terminal.
+
 Without compositing option enabled
 ![This is an image](https://github.com/frank038/Simple-Menu/blob/main/screenshot1.png)
 
