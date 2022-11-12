@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-#### v 0.7
+
+#### v 0.8
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, os, time
 from shutil import which as sh_which
@@ -20,8 +22,7 @@ screen_h = 0
 sx = 0
 sy = 0
 
-#
-# menu_is_changed = 0
+PROG_DIR = os.getcwd()
 
 #### main application categories
 Development = []
@@ -39,6 +40,34 @@ Other = []
 # the dirs of the application files
 app_dirs_user = [os.path.expanduser("~")+"/.local/share/applications"]
 app_dirs_system = ["/usr/share/applications", "/usr/local/share/applications"]
+
+
+def f_on_pop_menu(el):
+    # category
+    cat = el[1]
+    if cat == "Multimedia":
+        # label - executable - icon - comment - path - terminal - file full path
+        Multimedia.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Development":
+        Development.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Education":
+        Education.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Game":
+        Game.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Graphics":
+        Graphics.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Network":
+        Network.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Office":
+        Office.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Settings":
+        Settings.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "System":
+        System.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    elif cat == "Utility":
+        Utility.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
+    else:
+        Other.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
 
 # populate the menu
 def on_pop_menu(app_dirs_user, app_dirs_system):
@@ -66,40 +95,40 @@ def on_pop_menu(app_dirs_user, app_dirs_system):
     global Other
     Other = []
     #
-    menu = getMenu(app_dirs_user, app_dirs_system).retList()
-    for el in menu:
-        # category
-        cat = el[1]
-        if cat == "Multimedia":
-            # label - executable - icon - comment - path - terminal - file full path
-            Multimedia.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Development":
-            Development.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Education":
-            Education.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Game":
-            Game.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Graphics":
-            Graphics.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Network":
-            Network.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Office":
-            Office.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Settings":
-            Settings.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "System":
-            System.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        elif cat == "Utility":
-            Utility.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-        else:
-            Other.append([el[0],el[2],el[3],el[4],el[5],el[6],el[7]])
-    #
-    # global menu_is_changed
-    # if menu_is_changed == 1:
-    #     menu_is_changed = 0
-    # elif menu_is_changed > 1:
-    #     menu_is_changed = 0
-    #     on_pop_menu(app_dirs_user, app_dirs_system)
+    if int(MENU_FROM_FILE) == 0:
+        menu = getMenu(app_dirs_user, app_dirs_system).retList()
+        for el in menu:
+            f_on_pop_menu(el)
+        return
+    elif int(MENU_FROM_FILE) == 1:
+        menu_tmp = []
+        menu = []
+        try:
+            ffile = open(os.path.join(PROG_DIR, "menu_list.txt"), "r")
+            tt = ffile.readline()
+            while tt:
+                if tt == "#####\n":
+                    menu.append(menu_tmp)
+                    menu_tmp = []
+                else:
+                    if tt.strip("\n") == "True":
+                        tt = True
+                    elif tt.strip("\n") == "False":
+                        tt = False
+                    else:
+                        tt2 = tt.strip("\n")
+                    menu_tmp.append(tt2)
+                tt = ffile.readline()
+            ffile.close()
+        except:
+            pass
+        #
+        for el in menu:
+            f_on_pop_menu(el)
+    
+if not os.path.exists(os.path.join(PROG_DIR, "menu_list.txt")):
+    import subprocess
+    subprocess.check_call(os.path.join(PROG_DIR, "createmenu.sh"), shell=True)
 
 on_pop_menu(app_dirs_user, app_dirs_system)
 
@@ -498,10 +527,12 @@ class menuWin(QtWidgets.QWidget):
         #
         cat_list = globals()[cat_name]
         self.listWidget.clear()
-        # 
+        #
         for el in cat_list:
             # 0 name - 1 executable - 2 icon - 3 comment - 4 path
-            exe_path = sh_which(el[1].split(" ")[0])
+            exe_path = 1
+            if not SHOW_ALL_PROG:
+                exe_path = sh_which(el[1].split(" ")[0])
             # file_info = QtCore.QFileInfo(exe_path)
             #
             if exe_path:
@@ -585,19 +616,6 @@ class menuWin(QtWidgets.QWidget):
             # item desktop file full path
             item_fpath = _item.fpath
             os.system("{} {} &".format(app_prog, item_fpath))
-            #
-            # item_icon = _item.picon
-            # item_exec = _item.exec_n
-            # item_term = _item.tterm
-            # # create a desktop file
-            # dest_file = os.path.join(os.path.expanduser("~"), DESKTOP_NAME, item_name)
-            # with open(dest_file+".desktop", "w") as ff:
-                # ff.write("[Desktop Entry]\n")
-                # ff.write("Type=Application\n")
-                # ff.write("Name={}\n".format(item_name))
-                # ff.write("Exec={}\n".format(item_exec))
-                # ff.write("Icon={}\n".format(item_icon))
-                # ff.write("Terminal={}\n".format(item_term))
         #
         self.listWidget.clearSelection()
         self.listWidget.clearFocus()
@@ -629,10 +647,6 @@ class menuWin(QtWidgets.QWidget):
     
     # execute the program from the menu
     def listwidgetclicked(self, item):
-        # self.p = QtCore.QProcess()
-        # self.p.setWorkingDirectory(os.getenv("HOME"))
-        # # self.p.start(str(item.exec_n))
-        # self.p.startDetached(str(item.exec_n))
         if item.tterm:
             tterminal = None
             if USER_TERMINAL:
@@ -652,13 +666,16 @@ class menuWin(QtWidgets.QWidget):
                 except Exception as E:
                     MyDialog("Error", "Terminal error: {}.".format(str(E)), self)
         else:
-            if item.ppath:
-                os.system("cd {} && {} & cd {} &".format(str(item.ppath), str(item.exec_n), os.getenv("HOME")))
+            if not sh_which(item.exec_n):
+                MyDialog("Info", "Command not found:\n{}".format(item.exec_n), self)
             else:
-                os.system("cd {} && {} &".format(os.getenv("HOME"), str(item.exec_n)))
-        # close the menu window
-        self.close()
-    
+                if item.ppath:
+                    os.system("cd {} && {} & cd {} &".format(str(item.ppath), str(item.exec_n), os.getenv("HOME")))
+                else:
+                    os.system("cd {} && {} &".format(os.getenv("HOME"), str(item.exec_n)))
+            # close the menu window
+            self.close()
+        
     # the bookmark button - populate
     def on_pref_clicked(self):
         # clear the search field
@@ -687,15 +704,6 @@ class menuWin(QtWidgets.QWidget):
             PATH = el[4].strip("\n")
             TTERM = el[5].strip("\n")
             FILENAME = el[6].strip("\n")
-            # # 
-            # if len(el) > 5:
-                # PATH_TEMP = el[4].strip("\n")
-                # FILENAME = el[5].strip("\n")
-                # if PATH_TEMP:
-                    # PATH = PATH_TEMP
-            # else:
-                # FILENAME = el[4].strip("\n")
-                # PATH = ""
             #
             exe_path = sh_which(EXEC.split(" ")[0])
             file_info = QtCore.QFileInfo(exe_path)
@@ -744,49 +752,27 @@ class menuWin(QtWidgets.QWidget):
 
 
 ################
-if __name__ == '__main__':
 
-    app = QtWidgets.QApplication(sys.argv)
-
-    ####
-    screen = app.primaryScreen()
-    size = screen.size()
-    #
-    if win_position == "center":
-        screen_w = size.width()
-        screen_h = size.height()
-    else:
-        screen_w, screen_h = win_position.split("/")
-    ####
-    window = menuWin()
-    # set new style globally
-    if theme_style:
-        s = QtWidgets.QStyleFactory.create(theme_style)
-        app.setStyle(s)
-    # set the icon style globally
-    if icon_theme:
-        QtGui.QIcon.setThemeName(icon_theme)
-    
-    # # some applications has been added or removed
-    # def directory_changed(edir):
-    #     global menu_is_changed
-    #     menu_is_changed += 1
-    #     if menu_is_changed == 1:
-    #         on_directory_changed()
-    
-    # def on_directory_changed():
-    #     on_pop_menu(app_dirs_system, app_dirs_user)
-    
-    # # check for changes in the application directories
-    # fPath = app_dirs_system + app_dirs_user
-    # fileSystemWatcher = QtCore.QFileSystemWatcher(fPath)
-    # fileSystemWatcher.directoryChanged.connect(directory_changed)
-    
-    # def file_changed(efile):
-    #     global list_events_all
-    #     list_events_all = []
-    #     get_events()
-    
-    sys.exit(app.exec_())
+app = QtWidgets.QApplication(sys.argv)
+#
+screen = app.primaryScreen()
+size = screen.size()
+#
+if win_position == "center":
+    screen_w = size.width()
+    screen_h = size.height()
+else:
+    screen_w, screen_h = win_position.split("/")
+####
+window = menuWin()
+# set new style globally
+if theme_style:
+    s = QtWidgets.QStyleFactory.create(theme_style)
+    app.setStyle(s)
+# set the icon style globally
+if icon_theme:
+    QtGui.QIcon.setThemeName(icon_theme)
+#
+sys.exit(app.exec_())
     
 ###################

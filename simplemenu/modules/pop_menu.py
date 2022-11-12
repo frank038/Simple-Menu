@@ -188,3 +188,16 @@ class getMenu():
             elif cccat in self.system_extended_categories:
                 return "System"
 
+if __name__ == '__main__':
+    # the dirs of the application files
+    app_dirs_user = [os.path.expanduser("~")+"/.local/share/applications"]
+    app_dirs_system = ["/usr/share/applications", "/usr/local/share/applications"]
+    #
+    menu = getMenu(app_dirs_user, app_dirs_system).retList()
+    ffile = open("menu_list.txt", "w")
+    for el in menu:
+        for ell in el:
+            ffile.write(str(ell)+"\n")
+        ffile.write("#####\n")
+    ffile.close()
+    

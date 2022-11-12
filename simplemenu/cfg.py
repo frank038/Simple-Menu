@@ -1,3 +1,5 @@
+# load the menu from a file: 0 No (desktop files will be used) - 1 Yes (need to be rebuild manually after each change)
+MENU_FROM_FILE=0
 # window position: "center" OR "x/y" (/ is the separator)
 win_position="center"
 # with or without window decoration: 0 with; 1 without
@@ -40,3 +42,5 @@ item_highlight_color=""
 DIALOGWIDTH=300
 # terminal to use: "" for the default one if any
 USER_TERMINAL=""
+# show also programs not found in paths: 0 no - 1 yes
+SHOW_ALL_PROG=1
