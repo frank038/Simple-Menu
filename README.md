@@ -1,7 +1,7 @@
 # Simple-Menu
 A menu application.
 
-V. 0.8 - Free to use and modify
+V. 0.9 - Free to use and modify
 
 Delete the file delete_me in the bookmarks folder before using this program.
 
